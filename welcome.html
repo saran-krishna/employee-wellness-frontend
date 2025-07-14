@@ -140,9 +140,17 @@
             this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Starting...</span>';
             this.disabled = true;
             
-            // Navigate to chat session
+            // Navigate to chat session using query parameters for better Vercel compatibility
+            const chatUrl = new URL('/chat.html', window.location.origin);
+            chatUrl.searchParams.set('company', companyName);
+            chatUrl.searchParams.set('token', token);
+            chatUrl.searchParams.set('anonymous_id', anonymousId);
+            chatUrl.searchParams.set('team', teamName);
+            
+            console.log('Navigating to chat with URL:', chatUrl.href);
+            
             setTimeout(() => {
-                window.location.href = `/${companyName}/chat/${token}/session`;
+                window.location.href = chatUrl.href;
             }, 800);
         });
 
