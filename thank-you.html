@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You - Employee Wellness</title>
+    <link rel="stylesheet" href="/static/style.css?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="thank-you-body">
+    <div class="thank-you-container">
+        <div class="thank-you-card">
+            <!-- Success Icon -->
+            <div class="success-icon">
+                <i class="fas fa-heart"></i>
+            </div>
+            
+            <!-- Main Message -->
+            <h1>Thank You for Your Participation</h1>
+            <p class="main-message">Your voice matters and helps create a better workplace for everyone.</p>
+            
+            <!-- Impact Summary -->
+            <div class="impact-summary">
+                <h2>Your Contribution Helps:</h2>
+                <div class="impact-items">
+                    <div class="impact-item">
+                        <div class="impact-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="impact-content">
+                            <h3>Workplace Insights</h3>
+                            <p>Identify trends and improvement areas</p>
+                        </div>
+                    </div>
+                    <div class="impact-item">
+                        <div class="impact-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="impact-content">
+                            <h3>Team Well-being</h3>
+                            <p>Better support systems and resources</p>
+                        </div>
+                    </div>
+                    <div class="impact-item">
+                        <div class="impact-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <div class="impact-content">
+                            <h3>Positive Change</h3>
+                            <p>Meaningful workplace improvements</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Next Steps -->
+            <div class="next-steps">
+                <h2>What Happens Next?</h2>
+                <div class="steps-list">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <p>Responses analyzed anonymously</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <p>Team-level wellness insights compiled</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <p>Data-driven recommendations provided</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <p>Follow-up wellness check-ins offered</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Support Resources -->
+            <div class="support-section">
+                <h2>Need Additional Support?</h2>
+                <p class="support-intro">Professional help is always available if you need it.</p>
+                <div class="support-options">
+                    <div class="support-card">
+                        <i class="fas fa-phone"></i>
+                        <h3>Employee Assistance</h3>
+                        <p>Contact HR for confidential counseling</p>
+                    </div>
+                    <div class="support-card">
+                        <i class="fas fa-heart-pulse"></i>
+                        <h3>Mental Health Resources</h3>
+                        <p>Access professional support services</p>
+                    </div>
+                </div>
+                <div class="reminder">
+                    <i class="fas fa-shield-check"></i>
+                    <p><strong>Remember:</strong> Seeking help is a sign of strength, not weakness.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="thank-you-footer">
+            <p><i class="fas fa-lock"></i> This session was completely anonymous and secure.</p>
+        </div>
+    </div>
+
+    <script>
+        // Add entrance animations
+        window.addEventListener('load', function() {
+            const thankYouCard = document.querySelector('.thank-you-card');
+            thankYouCard.style.opacity = '0';
+            thankYouCard.style.transform = 'translateY(30px)';
+            
+            setTimeout(() => {
+                thankYouCard.style.transition = 'all 0.8s ease-out';
+                thankYouCard.style.opacity = '1';
+                thankYouCard.style.transform = 'translateY(0)';
+            }, 200);
+            
+            // Animate impact items
+            const impactItems = document.querySelectorAll('.impact-item');
+            impactItems.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateX(-20px)';
+                
+                setTimeout(() => {
+                    item.style.transition = 'all 0.6s ease-out';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateX(0)';
+                }, 800 + (index * 200));
+            });
+        });
+        
+        console.log('Thank you page loaded');
+    </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "name": "employee-wellness-frontend",
+  "version": "1.0.0",
+  "description": "Employee Wellness Chat Frontend - Static site for Vercel deployment",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python -m http.server 3000",
+    "build": "echo 'No build needed - static site'",
+    "start": "echo 'Static site - deployed on Vercel'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/saran-krishna/employee-wellness-frontend.git"
+  },
+  "keywords": [
+    "employee-wellness",
+    "chat",
+    "vercel",
+    "static-site",
+    "ai-counseling"
+  ],
+  "author": "Saran Krishna",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}

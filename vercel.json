@@ -1,0 +1,46 @@
+{
+  "buildCommand": "echo 'No build needed for static site'",
+  "outputDirectory": ".",
+  "rewrites": [
+    {
+      "source": "/([^/]+)/chat/([^/]+)/?",
+      "destination": "/welcome.html"
+    },
+    {
+      "source": "/([^/]+)/chat/([^/]+)/session/?",
+      "destination": "/chat.html"
+    },
+    {
+      "source": "/thank-you/?",
+      "destination": "/thank-you.html"
+    },
+    {
+      "source": "/error/?",
+      "destination": "/error.html"
+    },
+    {
+      "source": "/test/?",
+      "destination": "/test.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/static/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*\\.(css|js))",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        }
+      ]
+    }
+  ]
+}
