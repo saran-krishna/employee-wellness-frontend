@@ -1,32 +1,14 @@
 {
   "version": 2,
   "name": "employee-wellness-chat",
-  "builds": [
+  "rewrites": [
     {
-      "src": "index.html",
-      "use": "@vercel/static"
+      "source": "/([^/]+)/chat/([^/]+)",
+      "destination": "/index.html"
     },
     {
-      "src": "static/**",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/static/(.*)",
-      "dest": "/static/$1"
-    },
-    {
-      "src": "/([^/]+)/chat/([^/]+)",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/((?!static).*)",
+      "destination": "/index.html"
     }
   ],
   "headers": [
