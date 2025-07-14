@@ -6,6 +6,9 @@
 class ChatInterface {
     constructor() {
         console.log('ChatInterface constructor called');
+        console.log('Current URL:', window.location.href);
+        console.log('URL pathname:', window.location.pathname);
+        console.log('URL search:', window.location.search);
         
         // Get configuration from URL or environment
         const urlParams = WellnessRouter.getParametersFromURL();
@@ -13,6 +16,8 @@ class ChatInterface {
         this.companyName = urlParams.company;
         this.anonymousId = urlParams.anonymousId;
         this.teamName = urlParams.team;
+        
+        console.log('URL Parameters extracted:', urlParams);
         
         this.sessionActive = false;
         this.messageQueue = [];
@@ -130,10 +135,10 @@ class ChatInterface {
     
     async initializeSession() {
         console.log('Initializing session with token validation...');
+        console.log('Using API Base URL:', this.API_BASE_URL);
+        console.log('Token:', this.token);
+        console.log('Company:', this.companyName);
         this.updateSendButton();
-        
-        // First, check API connectivity
-        await this.checkApiHealth();
         
         try {
             const response = await fetch(`${this.API_BASE_URL}/api/validate-token`, {
@@ -159,17 +164,33 @@ class ChatInterface {
             }
         } catch (error) {
             console.error('Session initialization failed:', error);
+            console.error('API URL was:', this.API_BASE_URL);
+            console.error('Token was:', this.token);
+            console.error('Company was:', this.companyName);
             
-            // Determine error type and redirect appropriately
-            if (error.message.includes('expired')) {
-                WellnessRouter.navigateToError('expired_token', 'Your access link has expired. Please request a new one.');
-            } else if (error.message.includes('invalid')) {
-                WellnessRouter.navigateToError('invalid_token', 'The access token is invalid or has been used.');
-            } else if (error.message.includes('fetch')) {
-                WellnessRouter.navigateToError('network_error', 'Unable to connect to the wellness service. Please check your internet connection.');
-            } else {
-                WellnessRouter.navigateToError('session_error', error.message);
-            }
+            // Show a user-friendly error message
+            this.showInitializationError(error);
+        }
+    }
+    
+    showInitializationError(error) {
+        // Display error in the UI instead of redirecting immediately
+        const errorMessage = document.createElement('div');
+        errorMessage.className = 'initialization-error';
+        errorMessage.innerHTML = `
+            <div class="error-content">
+                <h3>Connection Issue</h3>
+                <p>Unable to connect to the wellness service.</p>
+                <p><strong>Details:</strong> ${error.message}</p>
+                <button onclick="location.reload()" class="retry-btn">Try Again</button>
+                <button onclick="window.history.back()" class="back-btn">Go Back</button>
+            </div>
+        `;
+        
+        // Insert error message into chat container
+        const chatContainer = document.querySelector('.chat-container');
+        if (chatContainer) {
+            chatContainer.appendChild(errorMessage);
         }
     }
     

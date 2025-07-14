@@ -117,6 +117,15 @@ class WellnessRouter {
         if (pathSegments.length >= 3 && pathSegments[1] === 'chat') {
             return pathSegments[2];
         }
+        
+        // Check for direct chat.html access with query parameters
+        if (pathSegments.includes('chat.html') || window.location.pathname.includes('chat.html')) {
+            const tokenFromQuery = urlParams.get('token');
+            if (tokenFromQuery) {
+                return tokenFromQuery;
+            }
+        }
+        
         return urlParams.get('token') || '';
     }
 
