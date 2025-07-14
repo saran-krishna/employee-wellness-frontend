@@ -1,62 +1,90 @@
 # Employee Wellness Chat - Frontend
 
-Anonymous employee wellness chat interface deployed on Vercel.
+This is the frontend application for the Employee Wellness Chat system, optimized for deployment on Vercel.
 
-## 🌐 Live URL Structure
-```
-https://your-domain.vercel.app/{company-name}/chat/{token}
+## Architecture
+
+- **Static HTML/CSS/JS** - No server-side rendering required
+- **Client-side routing** - Handles URL parsing and navigation
+- **Environment-based API configuration** - Supports multiple backend environments
+- **Responsive design** - Works on desktop and mobile devices
+
+## Deployment
+
+### Vercel Deployment
+
+1. **Create new Vercel project** from this directory
+2. **Set environment variables** in Vercel dashboard:
+   - `VITE_API_BASE_URL`: Your Railway backend URL
+3. **Deploy** - Vercel will automatically deploy when you push to Git
+
+### Environment Variables
+
+```bash
+VITE_API_BASE_URL=https://web-production-fa83.up.railway.app
 ```
 
-## 🏗️ Architecture
-- **Frontend**: Static HTML/CSS/JS on Vercel
-- **Backend**: FastAPI on Railway (`https://web-production-fa83.up.railway.app`)
-- **Admin**: Streamlit Cloud (token generation & analytics)
+## URL Structure
 
-## 📁 Project Structure
+The frontend supports the following URL patterns:
+
+- `/` - Landing page
+- `/{company}/chat/{token}` - Welcome page (redirects from backend links)
+- `/{company}/chat/{token}/session` - Chat interface
+- `/thank-you` - Session completion page
+- `/error` - Error handling page
+
+## API Integration
+
+The frontend communicates with the Railway-hosted backend through these endpoints:
+
+- `POST /api/validate-token` - Validates access tokens
+- `POST /api/chat` - Sends chat messages
+- `POST /api/end-session` - Ends chat sessions
+
+## Features
+
+- **Anonymous Access** - Token-based authentication
+- **Real-time Chat** - AI-powered wellness counseling
+- **Session Management** - Start, maintain, and end sessions
+- **Error Handling** - Graceful error states and recovery
+- **Mobile Responsive** - Optimized for all device sizes
+
+## Development
+
+For local development:
+
+```bash
+# Serve static files (use any static file server)
+npx serve .
+
+# Or use Python
+python -m http.server 8080
+
+# Or use Node.js
+npx http-server
 ```
-frontend-repo/
-├── index.html          # Main chat interface
+
+## Files Structure
+
+```
+vercel-frontend/
+├── index.html          # Landing page
+├── chat.html           # Chat interface
+├── welcome.html        # Session welcome
+├── thank-you.html      # Completion page
+├── error.html          # Error handling
+├── vercel.json         # Vercel configuration
 ├── static/
-│   ├── style.css       # Styling
-│   └── chat.js         # Chat functionality
-├── vercel.json         # Vercel routing config
+│   ├── style.css       # Styles
+│   ├── chat.js         # Chat functionality
+│   └── router.js       # Client-side routing
 └── README.md           # This file
 ```
 
-## 🚀 Deployment
-This repository is automatically deployed to Vercel via GitHub integration.
+## Security
 
-### Manual Deployment
-```bash
-npm install -g vercel
-vercel --prod
-```
-
-## 🔗 URL Routing
-- `/{company}/chat/{token}` → Chat interface with pre-configured access
-- All other routes → Redirect to chat interface
-
-## 🛠️ Development
-1. Clone repository
-2. Open `index.html` in browser
-3. Test with URL: `localhost:3000/testcompany/chat/testtoken`
-
-## 🔧 Configuration
-- Backend API: `https://web-production-fa83.up.railway.app`
-- CORS: Configured for Vercel domains
-- Routes: Dynamic company/token extraction
-
-## 🔐 Security
-- No sensitive data in frontend
-- Token-based authentication
-- Anonymous user sessions
-- HTTPS-only communication
-
-## 📊 Analytics
-All analytics are handled by the Railway backend and viewed through the Streamlit admin dashboard.
-
----
-
-**Admin Dashboard**: Streamlit Cloud (separate deployment)  
-**Backend API**: Railway (separate deployment)  
-**Frontend**: This Vercel deployment
+- No sensitive data stored in frontend
+- Token-based access only
+- HTTPS-only communication with backend
+- XSS protection through content sanitization

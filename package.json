@@ -1,0 +1,36 @@
+{
+  "name": "employee-wellness-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for Employee Wellness Chat System - Optimized for Vercel deployment",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx serve . -p 3000",
+    "preview": "npx serve . -p 3000",
+    "test": "echo \"Open test.html in browser to run frontend tests\"",
+    "build": "echo \"No build step required for static site\"",
+    "deploy": "vercel --prod"
+  },
+  "keywords": [
+    "employee-wellness",
+    "chat",
+    "frontend",
+    "vercel",
+    "static-site"
+  ],
+  "author": "Employee Wellness Team",
+  "license": "MIT",
+  "devDependencies": {
+    "serve": "^14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_USERNAME/employee-wellness-frontend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/YOUR_USERNAME/employee-wellness-frontend/issues"
+  },
+  "homepage": "https://github.com/YOUR_USERNAME/employee-wellness-frontend#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

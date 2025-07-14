@@ -99,10 +99,15 @@
     </div>
 
     <script>
-        const token = "{{ token }}";
-        const companyName = "{{ company_name }}";
-        const anonymousId = "{{ anonymous_id }}";
-        const teamName = "{{ team_name }}";
+        // Extract parameters from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlPath = window.location.pathname.split('/');
+        
+        // Extract from URL: /{company_name}/chat/{token}
+        const companyName = urlPath[1] || urlParams.get('company') || 'demo';
+        const token = urlPath[3] || urlParams.get('token') || '';
+        const anonymousId = urlParams.get('anonymous_id') || 'anon_' + Date.now();
+        const teamName = urlParams.get('team') || 'General';
         
         // Session timer
         let sessionStartTime = Date.now();
@@ -118,8 +123,19 @@
         setInterval(updateSessionTimer, 1000);
         
         // Debug logging
-        console.log('Chat page loaded, token:', token ? 'present' : 'missing');
+        console.log('Chat page loaded');
+        console.log('Company:', companyName);
+        console.log('Token:', token ? 'present' : 'missing');
+        console.log('Anonymous ID:', anonymousId);
+        console.log('Team:', teamName);
+        
+        // Validate token presence
+        if (!token) {
+            console.error('No token provided');
+            window.location.href = '/error.html?error=missing_token';
+        }
     </script>
+    <script src="/static/router.js"></script>
     <script src="/static/chat.js?v=3"></script>
 </body>
 </html>

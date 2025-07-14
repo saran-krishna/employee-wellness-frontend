@@ -23,7 +23,7 @@
             <div class="welcome-card">
                 <!-- Team Greeting -->
                 <div class="team-greeting">
-                    <h1>{{ team_greeting }}</h1>
+                    <h1 id="teamGreeting">Welcome to Your Wellness Chat</h1>
                     <p class="welcome-subtitle">Your anonymous wellness conversation awaits</p>
                 </div>
 
@@ -98,33 +98,73 @@
 
         <!-- Footer -->
         <div class="welcome-footer">
-            <p>ID: {{ anonymous_id[:8] }}... • {{ team_name }} Team • Secure Session</p>
+            <p id="sessionInfo">Secure Session • Anonymous Access</p>
         </div>
     </div>
 
     <script>
+        // Extract parameters from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlPath = window.location.pathname.split('/');
+        
+        // Extract from URL: /{company_name}/chat/{token}
+        const companyName = urlPath[1] || urlParams.get('company') || 'demo';
+        const token = urlPath[3] || urlParams.get('token') || '';
+        const anonymousId = urlParams.get('anonymous_id') || 'anon_' + Date.now();
+        const teamName = urlParams.get('team') || 'General';
+        
+        // Update page content with extracted data
+        function updatePageContent() {
+            const teamGreeting = document.getElementById('teamGreeting');
+            const sessionInfo = document.getElementById('sessionInfo');
+            
+            if (teamName && teamName !== 'General') {
+                teamGreeting.textContent = `Welcome, ${teamName} Team!`;
+            }
+            
+            if (anonymousId && teamName) {
+                sessionInfo.innerHTML = `ID: ${anonymousId.substring(0, 8)}... • ${teamName} Team • Secure Session`;
+            }
+        }
+        
+        // Start chat button functionality
         document.getElementById('startChatBtn').addEventListener('click', function() {
+            // Validate token
+            if (!token) {
+                window.location.href = '/error.html?error=missing_token';
+                return;
+            }
+            
             // Add loading state
             this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Starting...</span>';
             this.disabled = true;
             
             // Navigate to chat session
             setTimeout(() => {
-                window.location.href = '/{{ company_name }}/chat/{{ token }}/session';
+                window.location.href = `/${companyName}/chat/${token}/session`;
             }, 800);
         });
 
-        // Add some nice entrance animations
+        // Add entrance animations
         window.addEventListener('load', function() {
-            document.querySelector('.welcome-card').style.opacity = '0';
-            document.querySelector('.welcome-card').style.transform = 'translateY(20px)';
+            updatePageContent();
+            
+            const welcomeCard = document.querySelector('.welcome-card');
+            welcomeCard.style.opacity = '0';
+            welcomeCard.style.transform = 'translateY(20px)';
             
             setTimeout(() => {
-                document.querySelector('.welcome-card').style.transition = 'all 0.6s ease-out';
-                document.querySelector('.welcome-card').style.opacity = '1';
-                document.querySelector('.welcome-card').style.transform = 'translateY(0)';
+                welcomeCard.style.transition = 'all 0.6s ease-out';
+                welcomeCard.style.opacity = '1';
+                welcomeCard.style.transform = 'translateY(0)';
             }, 100);
         });
+        
+        console.log('Welcome page loaded');
+        console.log('Company:', companyName);
+        console.log('Token:', token ? 'present' : 'missing');
+        console.log('Team:', teamName);
     </script>
+    <script src="/static/router.js"></script>
 </body>
 </html>

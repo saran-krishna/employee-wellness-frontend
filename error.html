@@ -18,7 +18,7 @@
             <h1>Access Not Available</h1>
             
             <div class="error-message">
-                <h2>{{ error }}</h2>
+                <h2 id="errorTitle">Unable to Access Wellness Chat</h2>
                 <p>We're unable to provide access to the wellness chat at this time.</p>
             </div>
             
@@ -28,6 +28,7 @@
                     <li>Your access link has expired (links are valid for 7 days)</li>
                     <li>The chat session has already been completed</li>
                     <li>There was an issue with the access link</li>
+                    <li>The token provided is invalid or missing</li>
                 </ul>
             </div>
             
@@ -48,6 +49,13 @@
                             <p>You may receive a new invitation during the next wellness check-in period</p>
                         </div>
                     </div>
+                    <div class="action-item">
+                        <i class="fas fa-refresh"></i>
+                        <div>
+                            <strong>Try Again</strong>
+                            <p>Check your access link and try again</p>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -60,5 +68,51 @@
             <p>Your well-being is important to us. We apologize for any inconvenience.</p>
         </div>
     </div>
+
+    <script>
+        // Get error details from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const errorType = urlParams.get('error');
+        const errorMessage = urlParams.get('message');
+        
+        // Update error content based on type
+        function updateErrorContent() {
+            const errorTitle = document.getElementById('errorTitle');
+            
+            switch(errorType) {
+                case 'missing_token':
+                    errorTitle.textContent = 'Access Token Missing';
+                    break;
+                case 'invalid_token':
+                    errorTitle.textContent = 'Invalid Access Token';
+                    break;
+                case 'expired_token':
+                    errorTitle.textContent = 'Access Token Expired';
+                    break;
+                case 'session_complete':
+                    errorTitle.textContent = 'Session Already Completed';
+                    break;
+                case 'network_error':
+                    errorTitle.textContent = 'Connection Error';
+                    break;
+                default:
+                    errorTitle.textContent = 'Unable to Access Wellness Chat';
+            }
+            
+            if (errorMessage) {
+                const errorMessageElement = document.querySelector('.error-message p');
+                errorMessageElement.textContent = errorMessage;
+            }
+        }
+        
+        // Initialize page
+        window.addEventListener('load', function() {
+            updateErrorContent();
+            
+            console.log('Error page loaded');
+            console.log('Error type:', errorType);
+            console.log('Error message:', errorMessage);
+        });
+    </script>
 </body>
 </html>

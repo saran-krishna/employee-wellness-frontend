@@ -105,5 +105,35 @@
             <p><i class="fas fa-lock"></i> This session was completely anonymous and secure.</p>
         </div>
     </div>
+
+    <script>
+        // Add entrance animations
+        window.addEventListener('load', function() {
+            const thankYouCard = document.querySelector('.thank-you-card');
+            thankYouCard.style.opacity = '0';
+            thankYouCard.style.transform = 'translateY(30px)';
+            
+            setTimeout(() => {
+                thankYouCard.style.transition = 'all 0.8s ease-out';
+                thankYouCard.style.opacity = '1';
+                thankYouCard.style.transform = 'translateY(0)';
+            }, 200);
+            
+            // Animate impact items
+            const impactItems = document.querySelectorAll('.impact-item');
+            impactItems.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateX(-20px)';
+                
+                setTimeout(() => {
+                    item.style.transition = 'all 0.6s ease-out';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateX(0)';
+                }, 800 + (index * 200));
+            });
+        });
+        
+        console.log('Thank you page loaded');
+    </script>
 </body>
 </html>
