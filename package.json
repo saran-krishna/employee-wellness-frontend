@@ -7,8 +7,9 @@
     "dev": "npx serve . -p 3000",
     "preview": "npx serve . -p 3000",
     "test": "echo \"Open test.html in browser to run frontend tests\"",
-    "build": "echo \"No build step required for static site\"",
-    "deploy": "vercel --prod"
+    "build": "echo \"Static site - no build required\"",
+    "deploy": "vercel --prod",
+    "start": "npx serve . -p 3000"
   },
   "keywords": [
     "employee-wellness",

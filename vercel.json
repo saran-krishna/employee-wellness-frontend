@@ -1,5 +1,26 @@
 {
+  "buildCommand": null,
+  "outputDirectory": ".",
+  "installCommand": "npm install",
+  "framework": null,
   "rewrites": [
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/test", "destination": "/test.html" },
+    { "source": "/thank-you", "destination": "/thank-you.html" },
+    { "source": "/error", "destination": "/error.html" },
+    { "source": "/:company/chat/:token", "destination": "/welcome.html" },
+    { "source": "/:company/chat/:token/session", "destination": "/chat.html" },
     { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/static/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
   ]
 }

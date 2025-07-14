@@ -39,21 +39,36 @@ class ChatInterface {
     }
     
     getApiBaseUrl() {
-        // Check for environment variables (Vite style)
+        // Check for global configuration first
+        if (typeof window !== 'undefined' && window.WELLNESS_CONFIG && window.WELLNESS_CONFIG.API_BASE_URL) {
+            return window.WELLNESS_CONFIG.API_BASE_URL;
+        }
+        
+        // Check for environment variables (Vercel)
         if (typeof process !== 'undefined' && process.env && process.env.VITE_API_BASE_URL) {
             return process.env.VITE_API_BASE_URL;
         }
         
-        // Check for Vercel environment variables
+        // Check for window environment variables (Vercel runtime)
+        if (typeof window !== 'undefined' && window.process && window.process.env && window.process.env.VITE_API_BASE_URL) {
+            return window.process.env.VITE_API_BASE_URL;
+        }
+        
+        // Check for legacy global config
+        if (typeof window !== 'undefined' && window.WELLNESS_API_URL) {
+            return window.WELLNESS_API_URL;
+        }
+        
+        // Environment-based fallback
         if (typeof window !== 'undefined' && window.location) {
             // For development
             if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
                 return 'http://localhost:8000';
             }
             
-            // Check for global config
-            if (window.WELLNESS_API_URL) {
-                return window.WELLNESS_API_URL;
+            // For Vercel production deployment
+            if (window.location.hostname.includes('.vercel.app') || window.location.hostname.includes('employee-wellness')) {
+                return 'https://web-production-fa83.up.railway.app';
             }
         }
         
@@ -117,6 +132,9 @@ class ChatInterface {
         console.log('Initializing session with token validation...');
         this.updateSendButton();
         
+        // First, check API connectivity
+        await this.checkApiHealth();
+        
         try {
             const response = await fetch(`${this.API_BASE_URL}/api/validate-token`, {
                 method: 'POST',
@@ -152,6 +170,27 @@ class ChatInterface {
             } else {
                 WellnessRouter.navigateToError('session_error', error.message);
             }
+        }
+    }
+    
+    async checkApiHealth() {
+        try {
+            console.log('Checking API health at:', this.API_BASE_URL);
+            const response = await fetch(`${this.API_BASE_URL}/ping`, {
+                method: 'GET',
+                timeout: 5000
+            });
+            
+            if (response.ok) {
+                console.log('✅ API health check passed');
+                return true;
+            } else {
+                console.warn('⚠️ API health check failed with status:', response.status);
+                return false;
+            }
+        } catch (error) {
+            console.error('❌ API health check failed:', error);
+            return false;
         }
     }
     
