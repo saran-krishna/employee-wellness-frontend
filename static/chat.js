@@ -120,25 +120,26 @@ class ChatInterface {
     async initializeSession() {
         console.log('Initializing session...');
         try {
-            const response = await fetch(`${this.API_BASE_URL}/chat/start`, {
+            const response = await fetch(`${this.API_BASE_URL}/api/validate-token`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     token: this.token,
-                    company_name: this.companyName,
-                    anonymous_id: this.anonymousId
+                    company_name: this.companyName
                 })
             });
             
             if (response.ok) {
+                const data = await response.json();
                 this.sessionActive = true;
-                console.log('Session initialized successfully');
+                console.log('Session initialized successfully:', data);
                 this.updateUIForActiveSession();
             } else {
-                console.error('Failed to initialize session:', response.statusText);
-                this.showError('Failed to start chat session. Please try again.');
+                const errorText = await response.text();
+                console.error('Failed to initialize session:', response.status, errorText);
+                this.showError('Invalid or expired access token. Please contact your administrator for a new link.');
             }
         } catch (error) {
             console.error('Error initializing session:', error);
@@ -169,15 +170,15 @@ class ChatInterface {
         this.showTypingIndicator();
         
         try {
-            const response = await fetch(`${this.API_BASE_URL}/chat/message`, {
+            const response = await fetch(`${this.API_BASE_URL}/api/chat`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     token: this.token,
-                    message: message,
-                    anonymous_id: this.anonymousId
+                    company_name: this.companyName,
+                    message: message
                 })
             });
             
@@ -186,6 +187,8 @@ class ChatInterface {
                 this.hideTypingIndicator();
                 this.addMessage(data.response, 'assistant');
             } else {
+                const errorText = await response.text();
+                console.error('Chat API error:', response.status, errorText);
                 this.hideTypingIndicator();
                 this.addMessage('Sorry, I encountered an error. Please try again.', 'assistant');
             }
@@ -251,14 +254,14 @@ class ChatInterface {
     
     async endSession() {
         try {
-            await fetch(`${this.API_BASE_URL}/chat/end`, {
+            await fetch(`${this.API_BASE_URL}/api/end-session`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     token: this.token,
-                    anonymous_id: this.anonymousId
+                    company_name: this.companyName
                 })
             });
         } catch (error) {
