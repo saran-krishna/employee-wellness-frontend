@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome - Wellness Chat</title>
+    <link rel="stylesheet" href="/static/style.css?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="welcome-body">
+    <div class="welcome-container">
+        <!-- Header -->
+        <div class="welcome-header">
+            <div class="logo">
+                <i class="fas fa-heart"></i>
+                <span>Wellness</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="welcome-main">
+            <div class="welcome-card">
+                <!-- Team Greeting -->
+                <div class="team-greeting">
+                    <h1>{{ team_greeting }}</h1>
+                    <p class="welcome-subtitle">Your anonymous wellness conversation awaits</p>
+                </div>
+
+                <!-- Trust Signals -->
+                <div class="trust-section">
+                    <h2>Your Privacy, Guaranteed</h2>
+                    <div class="trust-grid">
+                        <div class="trust-item">
+                            <i class="fas fa-shield-check"></i>
+                            <div>
+                                <strong>100% Anonymous</strong>
+                                <span>No personal data stored</span>
+                            </div>
+                        </div>
+                        <div class="trust-item">
+                            <i class="fas fa-lock"></i>
+                            <div>
+                                <strong>Encrypted</strong>
+                                <span>End-to-end security</span>
+                            </div>
+                        </div>
+                        <div class="trust-item">
+                            <i class="fas fa-eye-slash"></i>
+                            <div>
+                                <strong>Confidential</strong>
+                                <span>Never shared or tracked</span>
+                            </div>
+                        </div>
+                        <div class="trust-item">
+                            <i class="fas fa-clock"></i>
+                            <div>
+                                <strong>Available 24/7</strong>
+                                <span>Chat whenever you need</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Tips -->
+                <div class="tips-section">
+                    <h2>Quick Tips for a Great Chat</h2>
+                    <div class="tips-list">
+                        <div class="tip-item">
+                            <span class="tip-number">1</span>
+                            <span>Be honest about how you're feeling - this is your safe space</span>
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-number">2</span>
+                            <span>Take your time - there's no rush to finish quickly</span>
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-number">3</span>
+                            <span>Ask for specific advice or just vent - both are perfectly fine</span>
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-number">4</span>
+                            <span>Your responses help improve workplace wellness for everyone</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Start Button -->
+                <div class="start-section">
+                    <button id="startChatBtn" class="start-chat-button">
+                        <span>Start My Wellness Chat</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <p class="session-info">Estimated time: 10-15 minutes</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="welcome-footer">
+            <p>ID: {{ anonymous_id[:8] }}... • {{ team_name }} Team • Secure Session</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('startChatBtn').addEventListener('click', function() {
+            // Add loading state
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Starting...</span>';
+            this.disabled = true;
+            
+            // Navigate to chat session
+            setTimeout(() => {
+                window.location.href = '/{{ company_name }}/chat/{{ token }}/session';
+            }, 800);
+        });
+
+        // Add some nice entrance animations
+        window.addEventListener('load', function() {
+            document.querySelector('.welcome-card').style.opacity = '0';
+            document.querySelector('.welcome-card').style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                document.querySelector('.welcome-card').style.transition = 'all 0.6s ease-out';
+                document.querySelector('.welcome-card').style.opacity = '1';
+                document.querySelector('.welcome-card').style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

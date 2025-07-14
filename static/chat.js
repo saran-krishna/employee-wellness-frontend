@@ -1,10 +1,9 @@
 class ChatInterface {
     constructor() {
         console.log('ChatInterface constructor called');
-        
-        // Extract company and token from URL path
-        this.extractUrlParameters();
-        
+        this.token = token; // From template
+        this.companyName = companyName; // From template
+        this.anonymousId = anonymousId; // From template
         this.sessionActive = false;
         this.messageQueue = [];
         
@@ -15,51 +14,9 @@ class ChatInterface {
         console.log('Company name:', this.companyName);
         console.log('API Base URL:', this.API_BASE_URL);
         
-        // Validate token before proceeding
-        if (!this.token || !this.companyName) {
-            this.showError('Invalid or missing access token. Please check your link.');
-            return;
-        }
-        
         this.initializeElements();
         this.initializeEventListeners();
         this.initializeSession();
-    }
-    
-    extractUrlParameters() {
-        // Extract from URL path: /{company-name}/chat/{token}
-        const pathParts = window.location.pathname.split('/').filter(part => part);
-        
-        if (pathParts.length >= 3 && pathParts[1] === 'chat') {
-            this.companyName = pathParts[0];
-            this.token = pathParts[2];
-            this.anonymousId = 'anon_' + Math.random().toString(36).substr(2, 9);
-        } else {
-            // Fallback: try to get from query parameters
-            const urlParams = new URLSearchParams(window.location.search);
-            this.token = urlParams.get('token');
-            this.companyName = urlParams.get('company') || 'Unknown Company';
-            this.anonymousId = urlParams.get('id') || 'anon_' + Math.random().toString(36).substr(2, 9);
-        }
-        
-        console.log('Extracted URL parameters:', {
-            companyName: this.companyName,
-            token: this.token ? 'present' : 'missing',
-            anonymousId: this.anonymousId
-        });
-    }
-    
-    showError(message) {
-        document.body.innerHTML = `
-            <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: #f5f5f5;">
-                <div style="background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center; max-width: 500px;">
-                    <div style="color: #e74c3c; font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
-                    <h2 style="color: #2c3e50; margin-bottom: 1rem;">Access Error</h2>
-                    <p style="color: #666; margin-bottom: 1.5rem;">${message}</p>
-                    <p style="color: #999; font-size: 0.9rem;">Please contact your administrator for a valid access link.</p>
-                </div>
-            </div>
-        `;
     }
     
     initializeElements() {
@@ -73,59 +30,62 @@ class ChatInterface {
         this.cancelEndSession = document.getElementById('cancelEndSession');
         this.confirmEndSession = document.getElementById('confirmEndSession');
         
-        // Update company name in UI if element exists
-        const companyElement = document.getElementById('companyName');
-        if (companyElement) {
-            companyElement.textContent = this.companyName;
-        }
-        
-        console.log('Elements initialized');
+        console.log('Elements found:', {
+            messageInput: !!this.messageInput,
+            sendButton: !!this.sendButton,
+            chatMessages: !!this.chatMessages
+        });
     }
     
     initializeEventListeners() {
         console.log('Setting up event listeners...');
+        // Send message on button click
+        this.sendButton.addEventListener('click', () => {
+            console.log('Send button clicked!');
+            this.sendMessage();
+        });
         
-        if (this.sendButton) {
-            this.sendButton.addEventListener('click', () => this.sendMessage());
-        }
+        // Send message on Enter (but not Shift+Enter)
+        this.messageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                console.log('Enter key pressed, sending message');
+                this.sendMessage();
+            }
+        });
         
-        if (this.messageInput) {
-            this.messageInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    this.sendMessage();
-                }
-            });
-            
-            this.messageInput.addEventListener('input', () => {
-                this.sendButton.disabled = !this.messageInput.value.trim();
-            });
-        }
+        // Auto-resize textarea and enable/disable send button
+        this.messageInput.addEventListener('input', () => {
+            this.autoResizeTextarea();
+            this.updateSendButton();
+        });
         
-        if (this.endChatButton) {
-            this.endChatButton.addEventListener('click', () => this.showEndSessionModal());
-        }
+        // End chat button
+        this.endChatButton.addEventListener('click', () => this.showEndSessionModal());
         
-        if (this.cancelEndSession) {
-            this.cancelEndSession.addEventListener('click', () => this.hideEndSessionModal());
-        }
+        // Modal buttons
+        this.cancelEndSession.addEventListener('click', () => this.hideEndSessionModal());
+        this.confirmEndSession.addEventListener('click', () => this.endSession());
         
-        if (this.confirmEndSession) {
-            this.confirmEndSession.addEventListener('click', () => this.endSession());
-        }
-        
-        console.log('Event listeners set up');
+        // Close modal on overlay click
+        this.endSessionModal.addEventListener('click', (e) => {
+            if (e.target === this.endSessionModal) {
+                this.hideEndSessionModal();
+            }
+        });
     }
     
     async initializeSession() {
-        console.log('Initializing session...');
+        // Initialize send button state
+        this.updateSendButton();
+        
         try {
             const response = await fetch(`${this.API_BASE_URL}/api/validate-token`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
+                body: JSON.stringify({ 
                     token: this.token,
                     company_name: this.companyName
                 })
@@ -134,37 +94,37 @@ class ChatInterface {
             if (response.ok) {
                 const data = await response.json();
                 this.sessionActive = true;
-                console.log('Session initialized successfully:', data);
-                this.updateUIForActiveSession();
+                this.messageInput.focus();
+                this.updateSendButton(); // Ensure send button state is updated after session is active
             } else {
-                const errorText = await response.text();
-                console.error('Failed to initialize session:', response.status, errorText);
-                this.showError('Invalid or expired access token. Please contact your administrator for a new link.');
+                throw new Error('Token validation failed');
             }
         } catch (error) {
-            console.error('Error initializing session:', error);
-            this.showError('Connection error. Please check your internet connection and try again.');
-        }
-    }
-    
-    updateUIForActiveSession() {
-        if (this.messageInput) {
-            this.messageInput.disabled = false;
-            this.messageInput.placeholder = "Type your message here...";
-        }
-        if (this.sendButton) {
-            this.sendButton.disabled = true; // Will be enabled when user types
+            console.error('Session initialization failed:', error);
+            this.showError('Failed to initialize session. Please try refreshing the page.');
         }
     }
     
     async sendMessage() {
+        console.log('sendMessage called');
         const message = this.messageInput.value.trim();
-        if (!message || !this.sessionActive) return;
+        console.log('Message:', message, 'Session active:', this.sessionActive);
         
-        // Add user message to UI
+        if (!message || !this.sessionActive) {
+            console.log('Cannot send: no message or session not active');
+            return;
+        }
+        
+        // Disable input while sending
+        this.setInputState(false);
+        
+        // Add user message to chat
         this.addMessage(message, 'user');
+        
+        // Clear input
         this.messageInput.value = '';
-        this.sendButton.disabled = true;
+        this.autoResizeTextarea();
+        this.updateSendButton();
         
         // Show typing indicator
         this.showTypingIndicator();
@@ -176,114 +136,197 @@ class ChatInterface {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
+                    message: message,
                     token: this.token,
-                    company_name: this.companyName,
-                    message: message
+                    company_name: this.companyName
                 })
             });
             
             if (response.ok) {
                 const data = await response.json();
                 this.hideTypingIndicator();
-                this.addMessage(data.response, 'assistant');
+                this.addMessage(data.response, 'bot');
             } else {
-                const errorText = await response.text();
-                console.error('Chat API error:', response.status, errorText);
-                this.hideTypingIndicator();
-                this.addMessage('Sorry, I encountered an error. Please try again.', 'assistant');
+                throw new Error('Failed to get response');
             }
         } catch (error) {
             console.error('Error sending message:', error);
             this.hideTypingIndicator();
-            this.addMessage('Connection error. Please check your internet connection.', 'assistant');
+            this.addMessage('I apologize, but I\'m having trouble responding right now. Please try again.', 'bot', true);
+        } finally {
+            this.setInputState(true);
+            this.messageInput.focus();
         }
     }
     
-    addMessage(content, type) {
+    addMessage(content, sender, isError = false) {
         const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${type}-message`;
+        messageDiv.className = `message ${sender === 'bot' ? 'assistant-message' : 'user-message'}`;
         
+        // Create avatar
         const avatar = document.createElement('div');
         avatar.className = 'message-avatar';
-        avatar.innerHTML = type === 'user' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
+        const icon = document.createElement('i');
+        if (sender === 'bot') {
+            icon.className = 'fas fa-robot';
+        } else {
+            icon.className = 'fas fa-user';
+        }
+        avatar.appendChild(icon);
         
+        // Create message content container
         const messageContent = document.createElement('div');
         messageContent.className = 'message-content';
         
-        const bubble = document.createElement('div');
-        bubble.className = 'message-bubble';
-        bubble.innerHTML = `<p>${content}</p>`;
+        // Create message bubble
+        const messageBubble = document.createElement('div');
+        messageBubble.className = `message-bubble ${isError ? 'error-message' : ''}`;
         
-        const time = document.createElement('div');
-        time.className = 'message-time';
-        time.textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        // Convert line breaks to paragraphs
+        const paragraphs = content.split('\n').filter(p => p.trim());
+        paragraphs.forEach(paragraph => {
+            const p = document.createElement('p');
+            p.textContent = paragraph;
+            messageBubble.appendChild(p);
+        });
         
-        messageContent.appendChild(bubble);
-        messageContent.appendChild(time);
-        messageDiv.appendChild(avatar);
-        messageDiv.appendChild(messageContent);
+        // Create timestamp
+        const timestamp = document.createElement('div');
+        timestamp.className = 'message-time';
+        const now = new Date();
+        timestamp.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        messageContent.appendChild(messageBubble);
+        messageContent.appendChild(timestamp);
+        
+        // Append elements based on sender
+        if (sender === 'user') {
+            messageDiv.appendChild(messageContent);
+            messageDiv.appendChild(avatar);
+        } else {
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(messageContent);
+        }
         
         this.chatMessages.appendChild(messageDiv);
-        this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+        
+        // Scroll to bottom
+        this.scrollToBottom();
+    }
+    
+    updateSendButton() {
+        const hasText = this.messageInput.value.trim().length > 0;
+        const shouldEnable = hasText && this.sessionActive;
+        this.sendButton.disabled = !shouldEnable;
     }
     
     showTypingIndicator() {
-        if (this.typingIndicator) {
-            this.typingIndicator.style.display = 'flex';
-            this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
-        }
+        this.typingIndicator.style.display = 'flex';
+        this.scrollToBottom();
     }
     
     hideTypingIndicator() {
-        if (this.typingIndicator) {
-            this.typingIndicator.style.display = 'none';
+        this.typingIndicator.style.display = 'none';
+    }
+    
+    setInputState(enabled) {
+        this.messageInput.disabled = !enabled;
+        
+        if (enabled) {
+            this.messageInput.focus();
+            this.updateSendButton(); // Use updateSendButton to properly control send button state
+        } else {
+            this.sendButton.disabled = true; // Always disable when input is disabled
         }
+    }
+    
+    autoResizeTextarea() {
+        this.messageInput.style.height = 'auto';
+        this.messageInput.style.height = Math.min(this.messageInput.scrollHeight, 120) + 'px';
+    }
+    
+    scrollToBottom() {
+        setTimeout(() => {
+            this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+        }, 100);
     }
     
     showEndSessionModal() {
-        if (this.endSessionModal) {
-            this.endSessionModal.style.display = 'flex';
-        }
+        this.endSessionModal.style.display = 'flex';
     }
     
     hideEndSessionModal() {
-        if (this.endSessionModal) {
-            this.endSessionModal.style.display = 'none';
-        }
+        this.endSessionModal.style.display = 'none';
     }
     
     async endSession() {
+        console.log('Ending session...');
+        this.hideEndSessionModal();
+        
+        // Disable all inputs
+        this.setInputState(false);
+        
         try {
-            await fetch(`${this.API_BASE_URL}/api/end-session`, {
+            const response = await fetch(`${this.API_BASE_URL}/api/end-session`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
+                body: JSON.stringify({ 
                     token: this.token,
                     company_name: this.companyName
                 })
             });
+            
+            if (response.ok) {
+                console.log('Session ended successfully, redirecting...');
+                // Mark session as inactive
+                this.sessionActive = false;
+                // Redirect to thank you page
+                window.location.href = '/thank-you';
+            } else {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || 'Failed to end session');
+            }
         } catch (error) {
             console.error('Error ending session:', error);
+            // Show error but still redirect after a delay since we want to end the session
+            alert('Session ended. Thank you for using the wellness chat.');
+            setTimeout(() => {
+                window.location.href = '/thank-you';
+            }, 1000);
         }
-        
-        // Redirect to thank you page or show completion message
-        document.body.innerHTML = `
-            <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: #f5f5f5;">
-                <div style="background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center; max-width: 500px;">
-                    <div style="color: #27ae60; font-size: 3rem; margin-bottom: 1rem;">✅</div>
-                    <h2 style="color: #2c3e50; margin-bottom: 1rem;">Session Complete</h2>
-                    <p style="color: #666; margin-bottom: 1.5rem;">Thank you for using our wellness chat service. Your feedback helps us improve workplace wellness.</p>
-                    <p style="color: #999; font-size: 0.9rem;">You can safely close this window.</p>
-                </div>
-            </div>
-        `;
+    }
+    
+    showError(message) {
+        this.addMessage(message, 'bot', true);
     }
 }
 
-// Auto-initialize when page loads
-document.addEventListener('DOMContentLoaded', function() {
+// Initialize chat interface when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM loaded, initializing ChatInterface...');
-    new ChatInterface();
+    try {
+        new ChatInterface();
+        console.log('ChatInterface initialized successfully');
+    } catch (error) {
+        console.error('Error initializing ChatInterface:', error);
+    }
+});
+
+// Handle page visibility to maintain session
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+        // Page became visible - could validate session here if needed
+    }
+});
+
+// Warn user before leaving page
+window.addEventListener('beforeunload', (e) => {
+    const chat = document.querySelector('.chat-container');
+    if (chat && window.location.pathname.includes('/chat/')) {
+        e.preventDefault();
+        e.returnValue = 'Are you sure you want to leave? Your chat session will be lost.';
+        return e.returnValue;
+    }
 });

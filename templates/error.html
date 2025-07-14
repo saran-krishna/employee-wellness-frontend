@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Error - Employee Wellness</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container error-page">
+        <div class="error-content">
+            <div class="error-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            
+            <h1>Access Not Available</h1>
+            
+            <div class="error-message">
+                <h2>{{ error }}</h2>
+                <p>We're unable to provide access to the wellness chat at this time.</p>
+            </div>
+            
+            <div class="possible-reasons">
+                <h3>This could happen if:</h3>
+                <ul>
+                    <li>Your access link has expired (links are valid for 7 days)</li>
+                    <li>The chat session has already been completed</li>
+                    <li>There was an issue with the access link</li>
+                </ul>
+            </div>
+            
+            <div class="next-steps">
+                <h3>What you can do:</h3>
+                <div class="action-items">
+                    <div class="action-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <strong>Contact HR</strong>
+                            <p>Request a new access link for the wellness chat</p>
+                        </div>
+                    </div>
+                    <div class="action-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <strong>Wait for Next Session</strong>
+                            <p>You may receive a new invitation during the next wellness check-in period</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="support-info">
+                <p><strong>Need immediate support?</strong> Don't hesitate to reach out to your Employee Assistance Program or mental health resources available through your organization.</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Your well-being is important to us. We apologize for any inconvenience.</p>
+        </div>
+    </div>
+</body>
+</html>
