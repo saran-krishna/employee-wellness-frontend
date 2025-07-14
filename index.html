@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Wellness Chat</title>
+    <link rel="stylesheet" href="/static/style.css?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="chat-body">
+    <div class="chat-container">
+        <!-- Header -->
+        <div class="chat-header">
+            <div class="header-left">
+                <div class="logo">
+                    <i class="fas fa-heart"></i>
+                    <span>Wellness Chat</span>
+                </div>
+            </div>
+            <div class="header-center">
+                <div class="session-time">
+                    <i class="fas fa-clock"></i>
+                    <span id="sessionTimer">00:00</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button id="endChatButton" class="end-session-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Messages Area -->
+        <div class="messages-container" id="chatMessages">
+            <div class="message assistant-message welcome-msg">
+                <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-content">
+                    <div class="message-bubble">
+                        <p>Hello! I'm your wellness counselor. This is a completely safe and anonymous space.</p>
+                        <p>I'm here to listen and provide support for whatever's on your mind about work, stress, or how you're feeling today.</p>
+                        <p>What would you like to talk about?</p>
+                    </div>
+                    <div class="message-time" data-time="now">Just now</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Typing Indicator -->
+        <div class="typing-indicator" id="typingIndicator" style="display: none;">
+            <div class="message assistant-message">
+                <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-content">
+                    <div class="typing-animation">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Input Area -->
+        <div class="input-container">
+            <div class="input-wrapper">
+                <textarea 
+                    id="messageInput" 
+                    placeholder="Loading chat..." 
+                    disabled
+                    rows="1"
+                ></textarea>
+                <button id="sendButton" disabled>
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+            <div class="input-footer">
+                <span class="privacy-notice">
+                    <i class="fas fa-shield-alt"></i>
+                    Your conversation is completely anonymous and confidential
+                </span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- End Session Modal -->
+    <div class="modal-overlay" id="endSessionModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>End Session</h3>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to end this wellness chat session?</p>
+                <p class="modal-note">Your conversation will be saved anonymously to help improve workplace wellness.</p>
+            </div>
+            <div class="modal-actions">
+                <button id="cancelEndSession" class="btn-secondary">Continue Chat</button>
+                <button id="confirmEndSession" class="btn-primary">End Session</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Session timer
+        let sessionStartTime = Date.now();
+        
+        function updateSessionTimer() {
+            const elapsed = Date.now() - sessionStartTime;
+            const minutes = Math.floor(elapsed / 60000);
+            const seconds = Math.floor((elapsed % 60000) / 1000);
+            const timerElement = document.getElementById('sessionTimer');
+            if (timerElement) {
+                timerElement.textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+        }
+        
+        setInterval(updateSessionTimer, 1000);
+    </script>
+    <script src="/static/chat.js?v=3"></script>
+</body>
+</html>
