@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="/static/style.css?v=2">
     <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="/static/config.js"></script>
 </head>
 <body class="welcome-body">
     <div class="welcome-container">
@@ -106,24 +105,13 @@
     <script>
         // Extract parameters from URL
         const urlParams = new URLSearchParams(window.location.search);
-        const urlPath = window.location.pathname.split('/').filter(segment => segment);
+        const urlPath = window.location.pathname.split('/');
         
-        console.log('Welcome page URL:', window.location.href);
-        console.log('URL pathname:', window.location.pathname);
-        console.log('URL search:', window.location.search);
-        console.log('Path segments:', urlPath);
-        
-        // Extract from URL: prioritize query parameters for better Vercel compatibility
-        const companyName = urlParams.get('company') || (urlPath.length > 0 && !urlPath[0].endsWith('.html') ? urlPath[0] : 'demo');
-        const token = urlParams.get('token') || (urlPath.length >= 3 && urlPath[1] === 'chat' ? urlPath[2] : '');
+        // Extract from URL: /{company_name}/chat/{token}
+        const companyName = urlPath[1] || urlParams.get('company') || 'demo';
+        const token = urlPath[3] || urlParams.get('token') || '';
         const anonymousId = urlParams.get('anonymous_id') || 'anon_' + Date.now();
         const teamName = urlParams.get('team') || 'General';
-        
-        console.log('Welcome page extracted parameters:');
-        console.log('- Company:', companyName);
-        console.log('- Token:', token);
-        console.log('- Anonymous ID:', anonymousId);
-        console.log('- Team:', teamName);
         
         // Update page content with extracted data
         function updatePageContent() {
@@ -151,14 +139,14 @@
             this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Starting...</span>';
             this.disabled = true;
             
-            // Navigate to chat session using query parameters for better Vercel compatibility
+            // Navigate to chat session with proper URL parameters
             const chatUrl = new URL('/chat.html', window.location.origin);
             chatUrl.searchParams.set('company', companyName);
             chatUrl.searchParams.set('token', token);
             chatUrl.searchParams.set('anonymous_id', anonymousId);
             chatUrl.searchParams.set('team', teamName);
             
-            console.log('Navigating to chat with URL:', chatUrl.href);
+            console.log('Navigating to chat:', chatUrl.href);
             
             setTimeout(() => {
                 window.location.href = chatUrl.href;

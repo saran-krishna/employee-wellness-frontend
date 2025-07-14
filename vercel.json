@@ -1,18 +1,41 @@
 {
-  "buildCommand": null,
-  "outputDirectory": ".",
-  "installCommand": "npm install",
-  "framework": null,
-  "rewrites": [
-    { "source": "/", "destination": "/index.html" },
-    { "source": "/test", "destination": "/test.html" },
-    { "source": "/api-test", "destination": "/api-test.html" },
-    { "source": "/quick-test", "destination": "/quick-test.html" },
-    { "source": "/thank-you", "destination": "/thank-you.html" },
-    { "source": "/error", "destination": "/error.html" },
-    { "source": "/:company/chat/:token", "destination": "/welcome.html" },
-    { "source": "/:company/chat/:token/session", "destination": "/chat.html" },
-    { "source": "/(.*)", "destination": "/index.html" }
+  "version": 2,
+  "name": "employee-wellness-frontend",
+  "builds": [
+    {
+      "src": "**/*",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/([^/]+)/chat/([^/]+)/?$",
+      "dest": "/welcome.html"
+    },
+    {
+      "src": "/([^/]+)/chat/([^/]+)/session/?$",
+      "dest": "/chat.html"
+    },
+    {
+      "src": "/thank-you/?$",
+      "dest": "/thank-you.html"
+    },
+    {
+      "src": "/error/?$",
+      "dest": "/error.html"
+    },
+    {
+      "src": "/test/?$",
+      "dest": "/test.html"
+    },
+    {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
   ],
   "headers": [
     {
@@ -21,6 +44,15 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*\\.(css|js))",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
         }
       ]
     }

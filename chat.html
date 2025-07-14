@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="/static/style.css?v=2">
     <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="/static/config.js"></script>
 </head>
 <body class="chat-body">
     <div class="chat-container">
@@ -104,24 +103,30 @@
         const urlParams = new URLSearchParams(window.location.search);
         const urlPath = window.location.pathname.split('/');
         
-        // Extract from URL: /{company_name}/chat/{token}
-        const companyName = urlPath[1] || urlParams.get('company') || 'demo';
-        const token = urlPath[3] || urlParams.get('token') || '';
+        // Extract from URL: /{company_name}/chat/{token} or query parameters
+        const companyName = urlParams.get('company') || urlPath[1] || 'demo';
+        const token = urlParams.get('token') || urlPath[3] || '';
         const anonymousId = urlParams.get('anonymous_id') || 'anon_' + Date.now();
         const teamName = urlParams.get('team') || 'General';
         
-        // Session timer
+        // Session timer - only start if elements exist
         let sessionStartTime = Date.now();
         
         function updateSessionTimer() {
+            const timerElement = document.getElementById('sessionTimer');
+            if (!timerElement) return; // Don't error if element doesn't exist
+            
             const elapsed = Date.now() - sessionStartTime;
             const minutes = Math.floor(elapsed / 60000);
             const seconds = Math.floor((elapsed % 60000) / 1000);
-            document.getElementById('sessionTimer').textContent = 
+            timerElement.textContent = 
                 `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
         
-        setInterval(updateSessionTimer, 1000);
+        // Only start timer if we have the timer element
+        if (document.getElementById('sessionTimer')) {
+            setInterval(updateSessionTimer, 1000);
+        }
         
         // Debug logging
         console.log('Chat page loaded');

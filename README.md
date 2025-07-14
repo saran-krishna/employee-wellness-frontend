@@ -1,90 +1,121 @@
 # Employee Wellness Chat - Frontend
 
-This is the frontend application for the Employee Wellness Chat system, optimized for deployment on Vercel.
+A secure, anonymous employee wellness chat interface deployed on Vercel, integrated with Railway backend and Streamlit admin dashboard.
 
-## Architecture
+## 🌐 Live Application
 
-- **Static HTML/CSS/JS** - No server-side rendering required
-- **Client-side routing** - Handles URL parsing and navigation
-- **Environment-based API configuration** - Supports multiple backend environments
-- **Responsive design** - Works on desktop and mobile devices
+- **Frontend**: https://employee-wellness-frontend-i8su.vercel.app
+- **Backend API**: https://web-production-fa83.up.railway.app  
+- **Admin Dashboard**: https://employee-wellness-admin.streamlit.app
 
-## Deployment
+## 🎯 How It Works
 
-### Vercel Deployment
+### For Employees:
+1. **Receive Access Link** from your admin (e.g., `https://employee-wellness-frontend-i8su.vercel.app/techcorp/chat/emp_abc123`)
+2. **Click the Link** - No registration required
+3. **Start Chatting** with the AI wellness counselor
+4. **Complete Session** anonymously
 
-1. **Create new Vercel project** from this directory
-2. **Set environment variables** in Vercel dashboard:
-   - `VITE_API_BASE_URL`: Your Railway backend URL
-3. **Deploy** - Vercel will automatically deploy when you push to Git
+### For Admins:
+1. **Access Admin Dashboard** at Streamlit
+2. **Generate Employee Tokens** with email, name, and team
+3. **Share Chat URLs** with employees
+4. **View Analytics** - team-level insights only
 
-### Environment Variables
+## 🔒 Privacy & Security
 
-```bash
-VITE_API_BASE_URL=https://web-production-fa83.up.railway.app
-```
+- ✅ **100% Anonymous** - No personal conversations stored
+- ✅ **Token-Based Access** - Secure, time-limited links
+- ✅ **Team-Level Analytics** - No individual tracking
+- ✅ **GDPR Compliant** - Privacy by design
 
-## URL Structure
+## 🚀 Technology Stack
 
-The frontend supports the following URL patterns:
+- **Frontend**: Static HTML/CSS/JavaScript (Vercel)
+- **Backend**: FastAPI + Python (Railway)
+- **Admin**: Streamlit (Streamlit Cloud)
+- **Database**: Google Firestore
+- **AI**: OpenAI GPT-3.5-turbo
 
-- `/` - Landing page
-- `/{company}/chat/{token}` - Welcome page (redirects from backend links)
+## 📱 URL Structure
+
+The application supports these URL patterns:
+
+- `/` - Landing page with information
+- `/{company}/chat/{token}` - Welcome page (entry point)
 - `/{company}/chat/{token}/session` - Chat interface
 - `/thank-you` - Session completion page
 - `/error` - Error handling page
 
-## API Integration
+## 🔧 API Integration
 
-The frontend communicates with the Railway-hosted backend through these endpoints:
+The frontend communicates with the Railway backend through these endpoints:
 
 - `POST /api/validate-token` - Validates access tokens
-- `POST /api/chat` - Sends chat messages
-- `POST /api/end-session` - Ends chat sessions
+- `POST /api/chat` - Sends chat messages and receives AI responses
+- `POST /api/end-session` - Ends chat sessions properly
 
-## Features
+## 🏢 Multi-Company Support
 
-- **Anonymous Access** - Token-based authentication
-- **Real-time Chat** - AI-powered wellness counseling
-- **Session Management** - Start, maintain, and end sessions
-- **Error Handling** - Graceful error states and recovery
-- **Mobile Responsive** - Optimized for all device sizes
+The system supports multiple companies with isolated data:
 
-## Development
+- **TechCorp** - Technology company
+- **GlobalTech** - Global technology firm
+- **gb_test** - Test company for development
 
-For local development:
+Each company has separate token management and analytics.
 
+## 🔄 Integration Flow
+
+```
+1. Admin (Streamlit) → Generate Token → Railway API
+2. Railway → Returns chat URL with token
+3. Employee → Clicks URL → Vercel Frontend
+4. Vercel → Validates token → Railway API
+5. Employee → Chats → Railway processes → Analytics
+6. Admin → Views analytics → Streamlit Dashboard
+```
+
+## 📊 Features
+
+### For Employees:
+- Anonymous access via secure tokens
+- AI-powered wellness counseling
+- Mobile-responsive chat interface
+- Session timer and progress tracking
+- Graceful error handling
+
+### For Admins:
+- Token generation (single & bulk)
+- Real-time analytics dashboard
+- Team-level insights
+- Stress level monitoring
+- Retention risk assessment
+- CSV export capabilities
+
+## 🛠️ Development
+
+This is a static site that requires no build process. The JavaScript automatically detects the environment and connects to the appropriate backend.
+
+### Local Development:
 ```bash
-# Serve static files (use any static file server)
+# Serve locally
+python -m http.server 3000
+
+# Or use any static server
 npx serve .
-
-# Or use Python
-python -m http.server 8080
-
-# Or use Node.js
-npx http-server
 ```
 
-## Files Structure
+### Environment Detection:
+- **Local**: Connects to `http://localhost:8000`
+- **Production**: Connects to `https://web-production-fa83.up.railway.app`
 
-```
-vercel-frontend/
-├── index.html          # Landing page
-├── chat.html           # Chat interface
-├── welcome.html        # Session welcome
-├── thank-you.html      # Completion page
-├── error.html          # Error handling
-├── vercel.json         # Vercel configuration
-├── static/
-│   ├── style.css       # Styles
-│   ├── chat.js         # Chat functionality
-│   └── router.js       # Client-side routing
-└── README.md           # This file
-```
+## 📞 Support
 
-## Security
+For technical issues or questions about the employee wellness system, please contact your system administrator.
 
-- No sensitive data stored in frontend
-- Token-based access only
-- HTTPS-only communication with backend
-- XSS protection through content sanitization
+---
+
+**Built with ❤️ for employee mental health and workplace wellness**
+
+*Last Updated: July 15, 2025*

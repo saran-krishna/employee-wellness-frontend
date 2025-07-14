@@ -1,37 +1,27 @@
 {
   "name": "employee-wellness-frontend",
   "version": "1.0.0",
-  "description": "Frontend for Employee Wellness Chat System - Optimized for Vercel deployment",
+  "description": "Employee Wellness Chat Frontend - Anonymous counseling interface",
   "main": "index.html",
   "scripts": {
-    "dev": "npx serve . -p 3000",
-    "preview": "npx serve . -p 3000",
-    "test": "echo \"Open test.html in browser to run frontend tests\"",
-    "build": "echo \"Static site - no build required\"",
-    "deploy": "vercel --prod",
-    "start": "npx serve . -p 3000"
-  },
-  "keywords": [
-    "employee-wellness",
-    "chat",
-    "frontend",
-    "vercel",
-    "static-site"
-  ],
-  "author": "Employee Wellness Team",
-  "license": "MIT",
-  "devDependencies": {
-    "serve": "^14.0.0"
+    "dev": "python -m http.server 3000",
+    "serve": "npx serve .",
+    "build": "echo 'Static site - no build needed'"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_USERNAME/employee-wellness-frontend.git"
+    "url": "https://github.com/saran-krishna/employee-wellness-frontend.git"
   },
-  "bugs": {
-    "url": "https://github.com/YOUR_USERNAME/employee-wellness-frontend/issues"
-  },
-  "homepage": "https://github.com/YOUR_USERNAME/employee-wellness-frontend#readme",
-  "engines": {
-    "node": ">=14.0.0"
-  }
+  "keywords": [
+    "employee-wellness",
+    "mental-health",
+    "anonymous-chat",
+    "ai-counseling",
+    "vercel",
+    "static-site"
+  ],
+  "author": "Saran Krishna",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
 }

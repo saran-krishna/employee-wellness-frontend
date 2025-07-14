@@ -102,86 +102,57 @@ class WellnessRouter {
         const pathSegments = window.location.pathname.split('/').filter(segment => segment);
         const urlParams = new URLSearchParams(window.location.search);
         
-        console.log('getCompanyFromURL - pathSegments:', pathSegments);
-        console.log('getCompanyFromURL - current pathname:', window.location.pathname);
-        
-        // Check for query parameter first (for direct chat.html access)
-        const companyFromQuery = urlParams.get('company');
-        if (companyFromQuery) {
-            console.log('Company from query:', companyFromQuery);
-            return companyFromQuery;
-        }
-        
         // Priority: URL path > query parameter > default
-        if (pathSegments.length > 0 && pathSegments[0] && 
-            pathSegments[0] !== 'index.html' && 
-            pathSegments[0] !== 'chat.html' && 
-            pathSegments[0] !== 'welcome.html' &&
-            !pathSegments[0].endsWith('.html')) {
-            console.log('Company from path:', pathSegments[0]);
+        if (pathSegments.length > 0 && pathSegments[0] && pathSegments[0] !== 'index.html') {
             return pathSegments[0];
         }
-        
-        console.log('Using default company: demo');
-        return 'demo';
+        return urlParams.get('company') || 'demo';
     }
 
     static getTokenFromURL() {
         const pathSegments = window.location.pathname.split('/').filter(segment => segment);
         const urlParams = new URLSearchParams(window.location.search);
         
-        console.log('getTokenFromURL - pathSegments:', pathSegments);
-        console.log('getTokenFromURL - search params:', window.location.search);
-        
-        // Check for query parameter first (for direct chat.html access)
-        const tokenFromQuery = urlParams.get('token');
-        if (tokenFromQuery) {
-            console.log('Token from query:', tokenFromQuery);
-            return tokenFromQuery;
-        }
-        
         // Priority: URL path > query parameter > empty
         if (pathSegments.length >= 3 && pathSegments[1] === 'chat') {
-            console.log('Token from path:', pathSegments[2]);
             return pathSegments[2];
         }
-        
-        // Check for direct chat.html access with query parameters
-        if (pathSegments.includes('chat.html') || window.location.pathname.includes('chat.html')) {
-            const tokenFromQuery = urlParams.get('token');
-            if (tokenFromQuery) {
-                console.log('Token from query (chat.html):', tokenFromQuery);
-                return tokenFromQuery;
-            }
-        }
-        
-        console.log('No token found, returning empty string');
-        return '';
+        return urlParams.get('token') || '';
     }
 
     static getParametersFromURL() {
         const urlParams = new URLSearchParams(window.location.search);
         const pathSegments = window.location.pathname.split('/').filter(segment => segment);
         
-        console.log('getParametersFromURL called');
-        console.log('Current URL:', window.location.href);
-        console.log('Path segments:', pathSegments);
-        console.log('Query params:', window.location.search);
+        // Handle different URL formats:
+        // 1. Query parameters (from Vercel rewrites): ?company=demo&token=123
+        // 2. Path parameters (from direct URLs): /demo/chat/123
         
-        // Always prioritize query parameters for Vercel deployment
-        const company = urlParams.get('company') || this.getCompanyFromURL();
-        const token = urlParams.get('token') || this.getTokenFromURL();
+        let company, token, anonymousId, team, teamGreeting;
         
-        const params = {
-            company: company,
-            token: token,
+        // Priority 1: Query parameters (most reliable for Vercel)
+        if (urlParams.get('company')) {
+            company = urlParams.get('company');
+            token = urlParams.get('token');
+        }
+        // Priority 2: Path parsing (for direct URLs)
+        else if (pathSegments.length >= 3 && pathSegments[1] === 'chat') {
+            company = pathSegments[0];
+            token = pathSegments[2];
+        }
+        // Priority 3: Defaults
+        else {
+            company = 'demo';
+            token = '';
+        }
+        
+        return {
+            company: company || 'demo',
+            token: token || '',
             anonymousId: urlParams.get('anonymous_id') || 'anon_' + Date.now(),
             team: urlParams.get('team') || 'General',
             teamGreeting: urlParams.get('team_greeting') || 'Welcome to Your Wellness Chat'
         };
-        
-        console.log('Final extracted parameters:', params);
-        return params;
     }
 
     // Navigation helpers
