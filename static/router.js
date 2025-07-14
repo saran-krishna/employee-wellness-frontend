@@ -102,19 +102,47 @@ class WellnessRouter {
         const pathSegments = window.location.pathname.split('/').filter(segment => segment);
         const urlParams = new URLSearchParams(window.location.search);
         
+        console.log('getCompanyFromURL - pathSegments:', pathSegments);
+        console.log('getCompanyFromURL - current pathname:', window.location.pathname);
+        
+        // Check for query parameter first (for direct chat.html access)
+        const companyFromQuery = urlParams.get('company');
+        if (companyFromQuery) {
+            console.log('Company from query:', companyFromQuery);
+            return companyFromQuery;
+        }
+        
         // Priority: URL path > query parameter > default
-        if (pathSegments.length > 0 && pathSegments[0] && pathSegments[0] !== 'index.html') {
+        if (pathSegments.length > 0 && pathSegments[0] && 
+            pathSegments[0] !== 'index.html' && 
+            pathSegments[0] !== 'chat.html' && 
+            pathSegments[0] !== 'welcome.html' &&
+            !pathSegments[0].endsWith('.html')) {
+            console.log('Company from path:', pathSegments[0]);
             return pathSegments[0];
         }
-        return urlParams.get('company') || 'demo';
+        
+        console.log('Using default company: demo');
+        return 'demo';
     }
 
     static getTokenFromURL() {
         const pathSegments = window.location.pathname.split('/').filter(segment => segment);
         const urlParams = new URLSearchParams(window.location.search);
         
+        console.log('getTokenFromURL - pathSegments:', pathSegments);
+        console.log('getTokenFromURL - search params:', window.location.search);
+        
+        // Check for query parameter first (for direct chat.html access)
+        const tokenFromQuery = urlParams.get('token');
+        if (tokenFromQuery) {
+            console.log('Token from query:', tokenFromQuery);
+            return tokenFromQuery;
+        }
+        
         // Priority: URL path > query parameter > empty
         if (pathSegments.length >= 3 && pathSegments[1] === 'chat') {
+            console.log('Token from path:', pathSegments[2]);
             return pathSegments[2];
         }
         
@@ -122,11 +150,13 @@ class WellnessRouter {
         if (pathSegments.includes('chat.html') || window.location.pathname.includes('chat.html')) {
             const tokenFromQuery = urlParams.get('token');
             if (tokenFromQuery) {
+                console.log('Token from query (chat.html):', tokenFromQuery);
                 return tokenFromQuery;
             }
         }
         
-        return urlParams.get('token') || '';
+        console.log('No token found, returning empty string');
+        return '';
     }
 
     static getParametersFromURL() {
