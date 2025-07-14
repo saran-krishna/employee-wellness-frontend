@@ -22,6 +22,8 @@ class WellnessRouter {
     handleRouting(path, urlParams) {
         const pathSegments = path.split('/').filter(segment => segment);
         
+        console.log('Handling route:', path, pathSegments);
+        
         // Root path - stay on index
         if (pathSegments.length === 0) {
             console.log('On root page');
@@ -35,27 +37,26 @@ class WellnessRouter {
             
             console.log('Chat route detected:', { companyName, token });
             
+            // Check if we're already on the right page
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            
             // Check if we need to redirect to welcome page first
             if (pathSegments.length === 3) {
-                // This is /{company}/chat/{token} - redirect to welcome
-                this.redirectToWelcome(companyName, token, urlParams);
+                // This is /{company}/chat/{token} - should show welcome
+                if (currentPage !== 'welcome.html') {
+                    this.redirectToWelcome(companyName, token, urlParams);
+                }
             } else if (pathSegments[3] === 'session') {
-                // This is /{company}/chat/{token}/session - should be on chat.html
-                this.ensureChatPage();
+                // This is /{company}/chat/{token}/session - should show chat
+                if (currentPage !== 'chat.html') {
+                    this.ensureChatPage(companyName, token, urlParams);
+                }
             }
-        }
-
-        // Thank you page
-        if (path.includes('thank-you')) {
-            console.log('Thank you page');
             return;
         }
 
-        // Error page
-        if (path.includes('error')) {
-            console.log('Error page');
-            return;
-        }
+        // Other routes - let them handle themselves
+        console.log('Other route, no action needed');
     }
 
     redirectToWelcome(companyName, token, urlParams) {
@@ -78,11 +79,18 @@ class WellnessRouter {
         window.location.href = welcomeUrl.href;
     }
 
-    ensureChatPage() {
+    ensureChatPage(companyName, token, urlParams) {
         // If we're not on chat.html, redirect there
-        if (!window.location.pathname.includes('chat.html')) {
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        if (currentPage !== 'chat.html') {
             const chatUrl = new URL('/chat.html', window.location.origin);
-            chatUrl.search = window.location.search;
+            chatUrl.searchParams.set('company', companyName);
+            chatUrl.searchParams.set('token', token);
+            
+            // Preserve any additional parameters
+            for (const [key, value] of urlParams) {
+                chatUrl.searchParams.set(key, value);
+            }
             
             console.log('Redirecting to chat page:', chatUrl.href);
             window.location.href = chatUrl.href;
@@ -94,14 +102,22 @@ class WellnessRouter {
         const pathSegments = window.location.pathname.split('/').filter(segment => segment);
         const urlParams = new URLSearchParams(window.location.search);
         
-        return pathSegments[0] || urlParams.get('company') || 'demo';
+        // Priority: URL path > query parameter > default
+        if (pathSegments.length > 0 && pathSegments[0] && pathSegments[0] !== 'index.html') {
+            return pathSegments[0];
+        }
+        return urlParams.get('company') || 'demo';
     }
 
     static getTokenFromURL() {
         const pathSegments = window.location.pathname.split('/').filter(segment => segment);
         const urlParams = new URLSearchParams(window.location.search);
         
-        return pathSegments[2] || urlParams.get('token') || '';
+        // Priority: URL path > query parameter > empty
+        if (pathSegments.length >= 3 && pathSegments[1] === 'chat') {
+            return pathSegments[2];
+        }
+        return urlParams.get('token') || '';
     }
 
     static getParametersFromURL() {

@@ -1,40 +1,24 @@
 {
-  "version": 2,
-  "name": "employee-wellness-frontend",
-  "builds": [
+  "rewrites": [
     {
-      "src": "**",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/([^/]+)/chat/([^/]+)/?$",
-      "dest": "/welcome.html?company=$1&token=$2"
+      "source": "/([^/]+)/chat/([^/]+)/?",
+      "destination": "/welcome.html"
     },
     {
-      "src": "/([^/]+)/chat/([^/]+)/session/?$",
-      "dest": "/chat.html?company=$1&token=$2"
+      "source": "/([^/]+)/chat/([^/]+)/session/?",
+      "destination": "/chat.html"
     },
     {
-      "src": "/thank-you/?$",
-      "dest": "/thank-you.html"
+      "source": "/thank-you/?",
+      "destination": "/thank-you.html"
     },
     {
-      "src": "/error/?$",
-      "dest": "/error.html"
+      "source": "/error/?",
+      "destination": "/error.html"
     },
     {
-      "src": "/static/(.*)",
-      "dest": "/static/$1"
-    },
-    {
-      "src": "/(.*\\.(css|js|png|jpg|jpeg|gif|svg|ico))",
-      "dest": "/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/test/?",
+      "destination": "/test.html"
     }
   ],
   "headers": [
@@ -56,8 +40,5 @@
         }
       ]
     }
-  ],
-  "env": {
-    "VITE_API_BASE_URL": "https://web-production-fa83.up.railway.app"
-  }
+  ]
 }
