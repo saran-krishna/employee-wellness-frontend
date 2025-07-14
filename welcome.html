@@ -106,13 +106,24 @@
     <script>
         // Extract parameters from URL
         const urlParams = new URLSearchParams(window.location.search);
-        const urlPath = window.location.pathname.split('/');
+        const urlPath = window.location.pathname.split('/').filter(segment => segment);
         
-        // Extract from URL: /{company_name}/chat/{token}
-        const companyName = urlPath[1] || urlParams.get('company') || 'demo';
-        const token = urlPath[3] || urlParams.get('token') || '';
+        console.log('Welcome page URL:', window.location.href);
+        console.log('URL pathname:', window.location.pathname);
+        console.log('URL search:', window.location.search);
+        console.log('Path segments:', urlPath);
+        
+        // Extract from URL: prioritize query parameters for better Vercel compatibility
+        const companyName = urlParams.get('company') || (urlPath.length > 0 && !urlPath[0].endsWith('.html') ? urlPath[0] : 'demo');
+        const token = urlParams.get('token') || (urlPath.length >= 3 && urlPath[1] === 'chat' ? urlPath[2] : '');
         const anonymousId = urlParams.get('anonymous_id') || 'anon_' + Date.now();
         const teamName = urlParams.get('team') || 'General';
+        
+        console.log('Welcome page extracted parameters:');
+        console.log('- Company:', companyName);
+        console.log('- Token:', token);
+        console.log('- Anonymous ID:', anonymousId);
+        console.log('- Team:', teamName);
         
         // Update page content with extracted data
         function updatePageContent() {

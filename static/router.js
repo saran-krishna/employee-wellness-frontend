@@ -161,14 +161,27 @@ class WellnessRouter {
 
     static getParametersFromURL() {
         const urlParams = new URLSearchParams(window.location.search);
+        const pathSegments = window.location.pathname.split('/').filter(segment => segment);
         
-        return {
-            company: this.getCompanyFromURL(),
-            token: this.getTokenFromURL(),
+        console.log('getParametersFromURL called');
+        console.log('Current URL:', window.location.href);
+        console.log('Path segments:', pathSegments);
+        console.log('Query params:', window.location.search);
+        
+        // Always prioritize query parameters for Vercel deployment
+        const company = urlParams.get('company') || this.getCompanyFromURL();
+        const token = urlParams.get('token') || this.getTokenFromURL();
+        
+        const params = {
+            company: company,
+            token: token,
             anonymousId: urlParams.get('anonymous_id') || 'anon_' + Date.now(),
             team: urlParams.get('team') || 'General',
             teamGreeting: urlParams.get('team_greeting') || 'Welcome to Your Wellness Chat'
         };
+        
+        console.log('Final extracted parameters:', params);
+        return params;
     }
 
     // Navigation helpers
