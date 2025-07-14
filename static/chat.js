@@ -1,9 +1,9 @@
 class ChatInterface {
     constructor() {
         console.log('ChatInterface constructor called');
-        this.token = token; // From template
-        this.companyName = companyName; // From template
-        this.anonymousId = anonymousId; // From template
+        this.token = window.token || token;
+        this.companyName = window.companyName || companyName;
+        this.anonymousId = window.anonymousId || anonymousId;
         this.sessionActive = false;
         this.messageQueue = [];
         
